@@ -30,11 +30,27 @@ module.exports = {
         }
     }, 
     async cadastrarUsuarios(request, response) {
-        try {            
+        try {      
+            
+            const { usu_nome, usu_cpf, usu_email, usu_senha, usu_tipo, usu_ativo, usu_dt_nasc } = request.body;
+
+            const sql = `
+                INSERT INTO usuarios 
+                (usu_nome, usu_cpf, usu_email, usu_senha, usu_tipo, usu_ativo, usu_dt_nasc) 
+                VALUES 
+                (?, ?, ?, ?, ?, ?, ?);
+            `;
+
+            const dados = [usu_nome, usu_cpf, usu_email, usu_senha, usu_tipo, usu_ativo, usu_dt_nasc];
+
+            const execSql = await db.query(sql, dados); 
+
+            const usu_id = execSql[0].insertId;
+
             return response.status(200).json({
                 sucesso: true, 
-                mensagem: 'Cadastro de usuários.', 
-                dados: null
+                mensagem: 'Cadastro de usuário efetuado com sucesso.', 
+                dados: usu_id
             });
         } catch (error) {
             return response.status(500).json({
